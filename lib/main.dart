@@ -2,4 +2,4 @@ import 'package:flutter/cupertino.dart';
 
 import 'pages/app.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());

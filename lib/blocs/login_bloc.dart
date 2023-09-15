@@ -3,8 +3,17 @@ import 'dart:async';
 import 'package:driving_schedule/validations/validations.dart';
 
 class LoginBloc {
-  StreamController _phonenumberController = new StreamController.broadcast();
-  StreamController _passwordController = new StreamController.broadcast();
+  final StreamController<String> _errorPhoneNumberController = StreamController();
+  final StreamController<String> _errorPasswordController = StreamController();
+
+  Stream<String> get errorPhoneNumberStream => _errorPhoneNumberController.stream;
+  Stream<String> get errorPasswordStream => _errorPasswordController.stream;
+
+  StreamController<String> phoneNumberStream = StreamController<String>.broadcast();
+  StreamController<String> passwordStream = StreamController<String>.broadcast();
+
+  String lastPhoneNumberValue = '';
+  String lastPasswordValue = '';
 
   static final LoginBloc _singleton = LoginBloc._internal();
 
@@ -14,23 +23,32 @@ class LoginBloc {
 
   LoginBloc._internal();
 
-  Stream get phonenumberStream => _phonenumberController.stream;
-  Stream get passwordStream => _passwordController.stream;
-
-  bool isValidateInfo(String phonenumber, String password) {
-    if (!Validations.isValidPhonenumber(phonenumber)) {
-      _phonenumberController.sink.addError("Số điện thoại không hợp lệ!");
+  bool isValidateInfo(String phoneNumber, String password) {
+    if (!Validations.isValidPhoneNumber(phoneNumber)) {
+      _errorPhoneNumberController.sink.addError("Số điện thoại không hợp lệ!");
       return false;
     }
     if (!Validations.isPassword(password)) {
-      _passwordController.sink.addError("Mật khẩu không hợp lệ!");
+      _errorPasswordController.sink.addError("Mật khẩu không hợp lệ!");
       return false;
     }
     return true;
   }
 
+  void listenToStreams() {
+    phoneNumberStream.stream.listen((String phoneNumber) {
+      lastPhoneNumberValue = phoneNumber;
+    });
+
+    passwordStream.stream.listen((String password) {
+      lastPasswordValue = password;
+    });
+  }
+
   void dispose() {
-    _phonenumberController.close();
-    _passwordController.close();
+    _errorPhoneNumberController.close();
+    _errorPasswordController.close();
+    phoneNumberStream.close();
+    passwordStream.close();
   }
 }
