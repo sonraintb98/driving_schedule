@@ -33,8 +33,15 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  LoginBloc loginBloc = new LoginBloc();
+  LoginBloc loginBloc = LoginBloc();
   NetworkRequest networkRequest = NetworkRequest();
+
+  @override
+  void initState() {
+    loginBloc.listenToStreams();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -61,8 +68,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             Container(
               padding: const EdgeInsets.all(10),
               child: StreamBuilder(
-                stream: loginBloc.phonenumberStream,
+                stream: loginBloc.errorPhoneNumberStream,
                 builder: (context, snapshot) => TextField(
+                  onChanged: (value) =>
+                      loginBloc.phoneNumberStream.sink.add(value),
                   controller: nameController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -74,8 +83,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             Container(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: StreamBuilder(
-                  stream: loginBloc.passwordStream,
+                  stream: loginBloc.errorPasswordStream,
                   builder: (context, snapshot) => TextField(
+                        onChanged: (value) =>
+                            loginBloc.passwordStream.sink.add(value),
                         obscureText: true,
                         controller: passwordController,
                         decoration: const InputDecoration(
@@ -93,19 +104,23 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               ),
             ),
             Container(
-                height: 50,
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: ElevatedButton(
-                    child: const Text('Login', style: TextStyle(fontSize: 25)),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.amber, // Background color
-                    ),
-                    onPressed: () async {
-                      print("Click login");
-                      bool result = await networkRequest.checkLogin();
-                      print('result: $result');
-                      //signup screen
-                    })),
+              height: 50,
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber, // Background color
+                ),
+                onPressed: () async {
+                  bool result = await networkRequest.checkLogin();
+                  // if (result) {
+                  // Navigator.push(
+                },
+                child: const Text(
+                  'Login',
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[

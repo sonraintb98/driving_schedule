@@ -13,9 +13,9 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['phonenumber'] = this.phonenumber;
-    data['password'] = this.password;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['phonenumber'] = phonenumber;
+    data['password'] = password;
     return data;
   }
 }

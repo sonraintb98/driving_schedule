@@ -1,9 +1,9 @@
 class Validations {
-  static bool isValidPhonenumber(String user) {
-    return user != null && user.length > 6;
+  static bool isValidPhoneNumber(String user) {
+    return user.length > 6;
   }
 
   static bool isPassword(String pass) {
-    return pass != null && pass.length > 6;
+    return pass.length > 6;
   }
 }
